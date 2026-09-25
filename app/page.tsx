@@ -33,10 +33,20 @@ export default function LandingPage() {
       {/* Overlay gradiente para garantir 100% de legibilidade em toda a rolagem */}
       <div className="pointer-events-none fixed inset-0 z-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505]/80" />
 
-      {/* Luzes difusas de ambiente */}
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute left-1/2 top-[-10%] h-[620px] w-[620px] -translate-x-1/2 rounded-full bg-[#ef233c]/[0.14] blur-[140px]" />
-        <div className="absolute right-[-10%] top-1/3 h-[420px] w-[420px] rounded-full bg-[#ef233c]/[0.07] blur-[120px]" />
+      {/* Luzes difusas de ambiente otimizadas via Radial Gradient (Zero GPU Blur Lag) */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div
+          className="absolute left-1/2 top-[-10%] h-[620px] w-[620px] -translate-x-1/2 rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(239, 35, 60, 0.12) 0%, rgba(239, 35, 60, 0) 70%)",
+          }}
+        />
+        <div
+          className="absolute right-[-10%] top-1/3 h-[450px] w-[450px] rounded-full"
+          style={{
+            background: "radial-gradient(circle, rgba(239, 35, 60, 0.07) 0%, rgba(239, 35, 60, 0) 70%)",
+          }}
+        />
       </div>
 
       {/* Header Sticky */}
