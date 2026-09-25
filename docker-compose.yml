@@ -1,0 +1,148 @@
+version: "3.8"
+
+# ==============================================================================
+# VICTOR HUB AI - PRODUCTION ORCHESTRATION STACK
+# Big Tech Startup Self-Hosted Ecosystem:
+# - Twenty CRM (Port 3000)
+# - n8n Workflow Automation Engine (Port 5678)
+# - Open SEO Performance Auditor (Port 4200)
+# - PostgreSQL 16 & Redis 7 Infrastructure
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. BANCO DE DADOS POSTGRESQL 16 (Twenty CRM & Serviços)
+  # ----------------------------------------------------------------------------
+  twenty-db:
+    image: postgres:16-alpine
+    container_name: victor-twenty-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-twenty}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-twentysecret}
+      POSTGRES_DB: ${POSTGRES_DB:-twenty}
+    volumes:
+      - twenty-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twenty"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - victor-hub-network
+
+  # ----------------------------------------------------------------------------
+  # 2. CACHE & FILAS REDIS 7 (Twenty CRM & Workers)
+  # ----------------------------------------------------------------------------
+  twenty-redis:
+    image: redis:7-alpine
+    container_name: victor-twenty-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - victor-hub-network
+
+  # ----------------------------------------------------------------------------
+  # 3. TWENTY CRM SERVER (Porta 3000)
+  # Alternativa open-source ao Salesforce/HubSpot
+  # ----------------------------------------------------------------------------
+  twenty-server:
+    image: twentyhq/twenty:latest
+    container_name: victor-twenty-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      PG_DATABASE_URL: postgres://${POSTGRES_USER:-twenty}:${POSTGRES_PASSWORD:-twentysecret}@twenty-db:5432/${POSTGRES_DB:-twenty}
+      REDIS_URL: redis://twenty-redis:6379
+      SERVER_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
+      FRONT_BASE_URL: ${TWENTY_FRONT_BASE_URL:-http://localhost:3000}
+      ACCESS_TOKEN_SECRET: ${TWENTY_ACCESS_TOKEN_SECRET:-victor_hub_access_token_secret_32chars_long}
+      LOGIN_TOKEN_SECRET: ${TWENTY_LOGIN_TOKEN_SECRET:-victor_hub_login_token_secret_32chars_long}
+      REFRESH_TOKEN_SECRET: ${TWENTY_REFRESH_TOKEN_SECRET:-victor_hub_refresh_token_secret_32chars}
+      FILE_TOKEN_SECRET: ${TWENTY_FILE_TOKEN_SECRET:-victor_hub_file_token_secret_32chars_long}
+    depends_on:
+      twenty-db:
+        condition: service_healthy
+      twenty-redis:
+        condition: service_started
+    networks:
+      - victor-hub-network
+
+  # ----------------------------------------------------------------------------
+  # 4. TWENTY CRM WORKER
+  # Processamento de filas e sincronizações em background
+  # ----------------------------------------------------------------------------
+  twenty-worker:
+    image: twentyhq/twenty:latest
+    container_name: victor-twenty-worker
+    restart: unless-stopped
+    command: ["yarn", "worker:prod"]
+    environment:
+      PG_DATABASE_URL: postgres://${POSTGRES_USER:-twenty}:${POSTGRES_PASSWORD:-twentysecret}@twenty-db:5432/${POSTGRES_DB:-twenty}
+      REDIS_URL: redis://twenty-redis:6379
+      SERVER_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
+    depends_on:
+      - twenty-server
+    networks:
+      - victor-hub-network
+
+  # ----------------------------------------------------------------------------
+  # 5. N8N AUTOMATION ENGINE (Porta 5678)
+  # Orquestrador de nós de IA, webhooks e integrações externas
+  # ----------------------------------------------------------------------------
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: victor-n8n-engine
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_PORT=5678
+      - N8N_HOST=localhost
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+    volumes:
+      - n8n-data:/home/node/.n8n
+    networks:
+      - victor-hub-network
+
+  # ----------------------------------------------------------------------------
+  # 6. OPEN SEO AUDITOR (Porta 4200)
+  # Motor open-source de auditoria técnica e Core Web Vitals
+  # ----------------------------------------------------------------------------
+  open-seo:
+    image: ghcr.io/every-app/open-seo:latest
+    container_name: victor-open-seo
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    environment:
+      - PORT=4200
+      - NODE_ENV=production
+    networks:
+      - victor-hub-network
+
+# ==============================================================================
+# VOLUMES & REDE INTEGRADA
+# ==============================================================================
+volumes:
+  twenty-db-data:
+    driver: local
+  redis-data:
+    driver: local
+  n8n-data:
+    driver: local
+
+networks:
+  victor-hub-network:
+    driver: bridge

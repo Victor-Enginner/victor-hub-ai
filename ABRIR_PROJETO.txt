@@ -1,0 +1,1 @@
+Instale Node.js, rode npm install e depois npm run dev. O projeto é Next.js/React, não apenas HTML estático.

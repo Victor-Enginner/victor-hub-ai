@@ -1,0 +1,43 @@
+{
+  "updatedAt": "2026-09-25T03:10:38.324Z",
+  "targetDirectory": "C:\\Users\\Victor Ads\\Documents\\Nova pasta",
+  "totalItems": 2,
+  "items": [
+    {
+      "id": "zip-victor-hub-ai",
+      "name": "Victor Hub AI",
+      "filename": "Victor-Hub-AI.zip",
+      "relativePath": "Victor-Hub-AI.zip",
+      "sizeBytes": 67552,
+      "sizeFormatted": "0.06 MB",
+      "lastModified": "2026-09-25T01:36:41.537Z",
+      "category": "Biblioteca de IA & Prompts",
+      "tags": [
+        "zip",
+        "template",
+        "componentes",
+        "tailwind"
+      ],
+      "status": "indexado",
+      "autoExtracted": false
+    },
+    {
+      "id": "zip-victor-visual-os-pro",
+      "name": "Victor Visual Os Pro",
+      "filename": "victor-visual-os-pro.zip",
+      "relativePath": "victor-visual-os-pro.zip",
+      "sizeBytes": 5114022,
+      "sizeFormatted": "4.88 MB",
+      "lastModified": "2026-07-09T00:35:23.873Z",
+      "category": "Templates de Sistema (OS)",
+      "tags": [
+        "zip",
+        "template",
+        "componentes",
+        "tailwind"
+      ],
+      "status": "indexado",
+      "autoExtracted": false
+    }
+  ]
+}
