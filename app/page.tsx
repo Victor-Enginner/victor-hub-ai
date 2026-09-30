@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import DavidAsciiCanvas from "@/components/david-ascii-canvas";
+import SiteMeshCanvas from "@/components/site-mesh-canvas";
 import {
   Zap,
   Layers,
@@ -22,16 +23,26 @@ export default function LandingPage() {
   const [planModalOpen, setPlanModalOpen] = useState(false);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f8]">
-      {/* Background DAVID ASCII Matrix cobrindo a tela inteira (Full Page / Fullscreen) */}
+    <div
+      className="relative min-h-screen overflow-x-hidden bg-[#050505] text-[#f7f7f8]"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 50% -10%, rgba(239, 35, 60, 0.20), transparent 45%), radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+        backgroundSize: "auto, 32px 32px",
+      }}
+    >
+      {/* Cyber Wave Mesh Canvas interativo (Reativo ao movimento do mouse) */}
+      <SiteMeshCanvas dotGrid={false} />
+
+      {/* Background DAVID ASCII Matrix */}
       <DavidAsciiCanvas
         imageSrc="/david.jpg"
-        opacity={0.32}
+        opacity={0.58}
         className="fixed inset-0 z-0 h-screen w-screen pointer-events-none"
       />
 
-      {/* Overlay gradiente para garantir 100% de legibilidade em toda a rolagem */}
-      <div className="pointer-events-none fixed inset-0 z-0 bg-gradient-to-b from-[#050505]/40 via-transparent to-[#050505]/80" />
+      {/* Overlay gradiente sutil para garantir legibilidade dos textos */}
+      <div className="pointer-events-none fixed inset-0 z-0 bg-gradient-to-b from-[#050505]/25 via-transparent to-[#050505]/75" />
 
       {/* Luzes difusas de ambiente otimizadas via Radial Gradient (Zero GPU Blur Lag) */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
