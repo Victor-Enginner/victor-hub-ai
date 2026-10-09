@@ -37,3 +37,6 @@ tsconfig.tsbuildinfo
 
 # Local Netlify folder
 .netlify
+
+# workflows n8n exportados contêm tokens; ficam só no backup
+n8n_workflows_extraidos/

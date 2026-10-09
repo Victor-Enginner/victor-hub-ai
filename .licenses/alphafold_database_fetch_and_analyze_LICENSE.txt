@@ -1,0 +1,4 @@
+AlphaFold Database Terms Notice
+Timestamp: 2026-09-27T21:35:20-03:00
+Please review and adhere to the AlphaFold Database terms of use and licenses at:
+https://alphafold.ebi.ac.uk/
